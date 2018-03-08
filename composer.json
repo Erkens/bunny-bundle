@@ -1,5 +1,5 @@
 {
-    "name": "skrz/bunny-bundle",
+    "name": "erkens/bunny-bundle",
     "description": "Symfony bundle that makes using RabbitMQ easy.",
     "keywords": [
         "rabbitmq",
@@ -26,7 +26,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "bunny/bunny": "~0.2.2",
+        "bunny/bunny": ">=0.3",
         "skrz/autowiring-bundle": "~1.1|~2.0",
         "skrz/meta": ">=3.0, <4.0"
     },
