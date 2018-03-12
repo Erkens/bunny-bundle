@@ -36,6 +36,12 @@ class ConsumerCommand extends Command
     /** @var int */
     private $messages = 0;
 
+    /**
+     * ConsumerCommand constructor.
+     * @param ContainerInterface $container
+     * @param BunnyManager $manager
+     * @param array $consumers
+     */
     public function __construct(ContainerInterface $container, BunnyManager $manager, array $consumers)
     {
         parent::__construct("bunny:consumer");
@@ -58,6 +64,12 @@ class ConsumerCommand extends Command
             ->addArgument("consumer-parameters", InputArgument::IS_ARRAY, "Argv input to consumer.", []);
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     * @throws BunnyException
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $consumerName = strtolower($input->getArgument("consumer-name"));
@@ -106,18 +118,22 @@ class ConsumerCommand extends Command
 
             $meta = null;
             if ($consumerSpec->meta) {
-                /** @var MetaInterface $metaClassName */
-                $metaClassName = $consumerSpec->meta;
 
-                if (!class_exists($metaClassName)) {
-                    throw new BunnyException("Consumer meta class {$metaClassName} does not exist.");
+                $meta = $this->container->get($consumerSpec->meta);
+                if (!$meta instanceof MetaInterface) {
+                    /** @var MetaInterface $metaClassName */
+                    $metaClassName = $consumerSpec->meta;
+
+                    if (!class_exists($metaClassName)) {
+                        throw new BunnyException("Consumer meta class {$metaClassName} does not exist.");
+                    }
+
+                    if (!method_exists($metaClassName, "getInstance")) {
+                        throw new BunnyException("Method {$metaClassName}::getInstance() does not exist.");
+                    }
+
+                    $meta = $metaClassName::getInstance();
                 }
-
-                if (!method_exists($metaClassName, "getInstance")) {
-                    throw new BunnyException("Method {$metaClassName}::getInstance() does not exist.");
-                }
-
-                $meta = $metaClassName::getInstance();
             }
 
             if ($consumerSpec->setUpMethod && !isset($calledSetUps[$consumerSpec->setUpMethod])) {
@@ -179,6 +195,15 @@ class ConsumerCommand extends Command
         $channel->getClient()->disconnect();
     }
 
+    /**
+     * @param mixed $consumer
+     * @param Consumer $consumerSpec
+     * @param MetaInterface|null $meta
+     * @param Message $message
+     * @param Channel $channel
+     * @param Client $client
+     * @throws BunnyException
+     */
     public function handleMessage($consumer, Consumer $consumerSpec, $meta = null, Message $message, Channel $channel, Client $client)
     {
         $data = $message->content;
@@ -211,5 +236,4 @@ class ConsumerCommand extends Command
             $client->stop();
         }
     }
-
 }

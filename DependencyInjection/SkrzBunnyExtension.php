@@ -29,6 +29,9 @@ class SkrzBunnyExtension extends Extension implements ConfigurationInterface
         $rootNode->children()->scalarNode("password")->defaultValue("guest");
         $rootNode->children()->scalarNode("heartbeat")->defaultValue(60);
 
+        $rootNode->children()->arrayNode("consumers")->prototype('scalar')->defaultValue([]);
+        $rootNode->children()->arrayNode("producers")->prototype('scalar')->defaultValue([]);
+
         /** @var ArrayNodeDefinition $exchangesNode */
         $exchangesNode = $rootNode->children()->arrayNode("exchanges")->useAttributeAsKey("name")->normalizeKeys(false)->defaultValue([])->prototype("array");
         $exchangesNode->children()->scalarNode("type");
