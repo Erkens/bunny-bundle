@@ -1,4 +1,5 @@
 <?php
+
 namespace Skrz\Bundle\BunnyBundle;
 
 /**
@@ -7,14 +8,14 @@ namespace Skrz\Bundle\BunnyBundle;
 final class ContentTypes
 {
 
-	/**
-	 * JSON serialization
-	 */
-	const APPLICATION_JSON = "application/json";
+    /**
+     * JSON serialization
+     */
+    const APPLICATION_JSON = "application/json";
 
-	/**
-	 * Protocol Buffers serialization
-	 */
-	const APPLICATION_PROTOBUF = "application/protobuf";
+    /**
+     * Protocol Buffers serialization
+     */
+    const APPLICATION_PROTOBUF = "application/protobuf";
 
 }
